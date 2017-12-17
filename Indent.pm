@@ -1,158 +1,131 @@
-=head1 NAME
-
-indent - simple indentation
-
-=head1 SYNOPSIS
-
-    # Print with indentation of 4 spaces and automatical line ending.
-    use Indent indent_size => 4, indent_eol => 1;
-    Indent::over;
-    Indent::printf "Hello, world!";
-    Indent::back;
-
-=head1 DESCRIPTION
-
-The module is designed to be used in simplest way as much as possible. It 
-provides static methods to configure, turn on, turn off indentation and 
-output using the current indentation.
-
-=head2 Indent::over
-
-Increase the indentation.
-
-=head2 Indent::back
-
-Decrease the indentation.
-
-=head2 Indent::reset
-
-Reset all indentations.
-
-=head2 Indent::print
-
-=head2 Indent::vprint
-
-=head2 Indent::printf
-
-Display arguments using the current settings for indentation and line 
-ending. These methods work almost similar to their core analogs except 
-they are not designed to work with file handlers. Another difference is 
-that B<Indent::printf> is able to print using the line ending setting 
-implicitly. B<Indent::vprint> applies indentation to each input argument.
-
-=head2 Indent::current
-
-Return the current indentaion string.
-
-=head2 Indent::config
-
-Configure the indentation. Parameters are passed as a hash.
-
-=over 4
-
-=item B<indent_size>
-
-The indentation size, the number of SPACE characters used in one 
-indentation step.
-
-=item B<indent_tab>
-
-The flag to use TAB instead SPACE. This option cancels the B<indent_size> 
-option.
-
-=item B<indent_eol>
-
-Output record separator for printing. It works similar to B<$\>. By 
-default it is not defined.
-
-=back
-
-=head1 SEE ALSO
-
-L<Text::Indent>
-
-L<String::Indent>
-
-... and lot of other competitors.
-
-=head1 AUTHOR
-
-Ildar Shaimordanov E<lt>ildar.shaimordanov@gmail.comE<gt>
-
-=head1 COPYRIGHT
-
-Copyright (c) 2017 Ildar Shaimordanov. All rights reserved. 
-
-This program is free software; you can redistribute it and/or modify it 
-under the same terms as Perl itself.
-
-See L<http://www.perl.com/perl/misc/Artistic.html>
-
-=cut
-
 package Indent;
 
 use strict;
 use warnings;
 
-our $INDENT = " " x 4;
-our $EOL = $\;
+# =========================================================================
 
-sub import {
-	shift;
-	goto &config;
+# Clamp a value on the edge, that is minimum. 
+# So the value can't be less than this restriction.
+sub _lclamp {
+	my ( $min, $v ) = @_;
+	$v < $min ? $min : $v;
+}
+
+# Set the valid level and evaluate the proper indentation.
+sub _set_indent {
+	my $p = shift;
+	my $v = shift // 0;
+
+	$p->{level} = _lclamp( 0, $p->{level} += $v );
+	$p->{indent} = $p->{text} x $p->{level};
+}
+
+# Detect argument type and get the level value
+sub _get_level {
+	my $v = shift;
+	ref $v eq __PACKAGE__ ? $v->{level} : $v;
 }
 
 # =========================================================================
 
-sub config {
-	my %opts = @_;
+sub new {
+	my $class = shift;
+	my %p = @_;
 
-	if ( $opts{indent_tab} ) {
-		$INDENT = "\t";
-	} elsif ( 
-		defined $opts{indent_size} 
-		&& $opts{indent_size} =~ /^\d+$/ 
-	) {
-		$INDENT = " " x $opts{indent_size};
-	}
+	my $self = {
+		text => $p{text} // ( $p{tab} ? "\t" : " " x _lclamp( 1, $p{size} // 4 ) ),
+		EOL => $p{eol} ? "\n" : $\,
+		level => _lclamp( 0, $p{level} // 0 ),
+	};
 
-	if ( defined $opts{indent_eol} ) {
-		$EOL = $opts{indent_eol} ? "\n" : $\;
-	}
+	_set_indent $self;
+
+	bless $self, $class;
 }
 
-my @indent = ( "" );
+# =========================================================================
+
+use overload (
+	'=' => sub {
+		my $self = shift;
+		bless { %{ $self } }, ref $self;
+	},
+	'""' => sub {
+		shift->{indent};
+	},
+	'++' => sub {
+		_set_indent shift, +1;
+	}, 
+	'--' => sub {
+		_set_indent shift, -1;
+	},
+	'+' => sub {
+		my $self = shift;
+		my $v = shift;
+
+		my %self = %{ $self };
+		_set_indent \%self, +_get_level($v);
+
+		bless { %self }, ref $self;
+	},
+	'-' => sub {
+		my $self = shift;
+		my $v = shift;
+
+		my %self = %{ $self };
+		_set_indent \%self, -_get_level($v);
+
+		bless { %self }, ref $self;
+	},
+);
+
+# =========================================================================
+
+sub import {
+	shift;
+	goto &config if @_;
+}
+
+# =========================================================================
+
+my $indent;
+
+sub config {
+	$indent = __PACKAGE__->new(@_);
+}
 
 sub reset {
-	@indent = $indent[0];
-}
-
-sub current {
-	$indent[-1];
+	$indent = $indent - $indent;
 }
 
 sub over {
-	push @indent, current . $INDENT;
+	$indent++;
 }
 
 sub back {
-	pop @indent if @indent > 1;
+	$indent--;
 }
 
 sub print {
-	local $\ = $EOL;
-	CORE::print current, @_;
+	my $self = ref $_[0] eq __PACKAGE__ ? shift : $indent;
+
+	local $\ = $self->{EOL};
+	CORE::print $self, @_;
 }
 
 sub vprint {
-	local $\ = $EOL;
-	CORE::print current, $_ for ( @_ );
+	my $self = shift;
+
+	local $\ = $self->{EOL};
+	CORE::print $self, $_ for ( @_ );
 }
 
 sub printf {
-	Indent::print sprintf(( shift || "" ), @_);
-}
+	my $self = ref $_[0] eq __PACKAGE__ ? shift : $indent;
+
+	$self->print(sprintf shift // "", @_);
+};
 
 1;
 
