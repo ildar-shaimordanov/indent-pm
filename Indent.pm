@@ -7,12 +7,14 @@ use warnings;
 
 # Clamp a value on the edge, that is minimum. 
 # So the value can't be less than this restriction.
+
 sub _lclamp {
 	my ( $min, $v ) = @_;
 	$v < $min ? $min : $v;
 }
 
 # Set the valid level and evaluate the proper indentation.
+
 sub _set_indent {
 	my $p = shift;
 	my $v = shift // 0;
@@ -22,6 +24,7 @@ sub _set_indent {
 }
 
 # Detect argument type and get the level value
+
 sub _get_level {
 	my $v = shift;
 	ref $v eq __PACKAGE__ ? $v->{level} : $v;
@@ -115,7 +118,7 @@ sub print {
 }
 
 sub vprint {
-	my $self = shift;
+	my $self = ref $_[0] eq __PACKAGE__ ? shift : $indent;
 
 	local $\ = $self->{EOL};
 	CORE::print $self, $_ for ( @_ );
