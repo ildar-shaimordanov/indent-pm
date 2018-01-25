@@ -3,6 +3,8 @@ package Indent;
 use strict;
 use warnings;
 
+our $VERSION = "0.3";
+
 # =========================================================================
 
 # Clamp a value on the edge, that is minimum. 
@@ -58,10 +60,10 @@ use overload (
 		shift->{indent};
 	},
 	'++' => sub {
-		_set_indent shift, +1;
+		shift->over;
 	}, 
 	'--' => sub {
-		_set_indent shift, -1;
+		shift->back;
 	},
 	'+' => sub {
 		my $self = shift;
@@ -99,33 +101,45 @@ sub config {
 }
 
 sub reset {
-	$indent = $indent - $indent;
+	my $self = shift;
+	$self = $indent unless ref $self eq __PACKAGE__;
+
+	_set_indent $self, -$self->{level};
 }
 
 sub over {
-	$indent++;
+	my $self = shift;
+	$self = $indent unless ref $self eq __PACKAGE__;
+
+	_set_indent $self, +1;
 }
 
 sub back {
-	$indent--;
+	my $self = shift;
+	$self = $indent unless ref $self eq __PACKAGE__;
+
+	_set_indent $self, -1;
 }
 
 sub print {
-	my $self = ref $_[0] eq __PACKAGE__ ? shift : $indent;
+	my $self = shift;
+	$self = $indent unless ref $self eq __PACKAGE__;
 
 	local $\ = $self->{EOL};
 	CORE::print $self, @_;
 }
 
 sub vprint {
-	my $self = ref $_[0] eq __PACKAGE__ ? shift : $indent;
+	my $self = shift;
+	$self = $indent unless ref $self eq __PACKAGE__;
 
 	local $\ = $self->{EOL};
 	CORE::print $self, $_ for ( @_ );
 }
 
 sub printf {
-	my $self = ref $_[0] eq __PACKAGE__ ? shift : $indent;
+	my $self = shift;
+	$self = $indent unless ref $self eq __PACKAGE__;
 
 	$self->print(sprintf shift // "", @_);
 };
