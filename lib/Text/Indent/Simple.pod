@@ -1,6 +1,6 @@
 =head1 NAME
 
-indent - simple indentation
+Text::Indent::Simple - simple indentation
 
 =head1 VERSION
 
