@@ -87,7 +87,7 @@ use overload (
 
 # =========================================================================
 
-my $indent;
+our $indent;
 
 sub import {
 	my $pkg = shift;

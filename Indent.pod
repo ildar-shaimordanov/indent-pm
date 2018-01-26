@@ -2,27 +2,33 @@
 
 indent - simple indentation
 
+=head1 VERSION
+
+This module version is 0.3.
+
 =head1 SYNOPSIS
 
-    # Print with indentation of 4 spaces and automatical line ending.
-    use Indent(size => 4, eol => 1);
-    Indent->over;
-    Indent->printf("Hello, world!");
-    Indent->back;
+    # Setup the indentation of 4 spaces and automatical line ending.
+    # Print somthing starting from the level 1.
+    use Indent;
+    my $indent = Indent->new(size => 4, eol => 1);
+    $indent->over;
+    $indent->printf("Hello, world!");
+    $indent->back;
 
 =head1 DESCRIPTION
 
-The module is designed to be used in simplest way as much as possible. It 
-provides static methods to configure, turn on, turn off indentation and 
-output using the current indentation.
+This module is designed to be used in the simplest way as much as possible. It ptrovides some methods to handle with indentation. Also it doesn't require any extra modules.
 
 =head1 METHODS AND FEATURES
 
 =head2 Constructor
 
-The constructor for Indent can be called for each indentation used by the 
-program. To construct new indent object call the method C<new> with one or 
-more hashed parameters:
+The constructor is used to explicitly instantiate the indent object. 
+
+By default (if no options provided) it creates the indent with C<4> space characters, starting level is C<0>, with no trailing newline. 
+
+The following options are available:
 
 =over 4
 
@@ -36,7 +42,7 @@ Use the TAB character as the indent text.
 
 =item B<size> => I<SIZE>
 
-Use indent as the I<SIZE> length string of SPACE characters.
+Use indent as the I<SIZE> length string of SPACE characters. The defauilt value is C<4>.
 
 =item B<eol> => I<0> | I<1>
 
@@ -90,18 +96,13 @@ Decrease the indent adding the specified value.
 
 =head2 Importing and Configuring
 
-There is no needs to import anything. For simplicity and to escape use of 
-indents in the OO-style, the module provides the configuring the indents 
-automatically during import the module. This feature is supported by 
-passing the options to the module (the same ones as described in the 
-section Constructor above). 
+There is no needs to import anything. The indent object can be created explicitly by the program or implicitly within the module. 
 
-    use Indent (size => 4, eol => 1);
+To get access to the internally instatiated indent object you could use:
 
-In this case the module allows to turn the functionality using the static 
-methods (see the next section).
+    my $indent = $Indent::indent;
 
-=head2 Other methods
+=head2 Methods
 
 There are few methods available for invoking as static methods or dynamic 
 methods (OO-style). Each use case is specified separately. 
@@ -112,7 +113,7 @@ methods (OO-style). Each use case is specified separately.
 
 C<indent>
 
-Composes a string from a list of arguments prepending the indent of the 
+Composes a string from a list of arguments prepended by the indent of the 
 proper level and a new line as it is configured.
 
     use Indent;
@@ -158,7 +159,7 @@ Print the formatted line of arguments with the curent indent.
 
 =back
 
-=head2 Static (POD-style) use
+=head2 Implicit (POD-style) use
 
     use Indent( text => " ", eol => 1, level => 1 );
 
@@ -169,7 +170,7 @@ Print the formatted line of arguments with the curent indent.
     Indent->reset;
     Indent->printf("there is no way");
 
-=head2 Dynamic (OO-style) use
+=head2 Explicit (OO-style) use
 
     use Indent;
     our $indent = Indent->new( text => " ", eol => 1, level => 1 );
