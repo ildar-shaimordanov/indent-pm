@@ -10,7 +10,10 @@ This module version is 0.3.
 
     # Setup the indentation of 4 spaces and automatical line ending.
     use Text::Indent::Simple;
-    my $indent = Text::Indent::Simple->new(size => 4, eol => 1);
+    my $indent = Text::Indent::Simple->new(
+        size => 4,
+        eol => 1,
+    );
 
     # Print somthing starting from the level 1.
     $indent->over;
@@ -127,7 +130,10 @@ Composes a string from a list of arguments prepended by the indent of the
 proper level and a new line as it is configured.
 
     use Text::Indent::Simple;
-    my $i = Text::Indent::Simple->new(size => 4, eol => 1);
+    my $i = Text::Indent::Simple->new(
+        size => 4,
+        eol => 1,
+    );
     $i->over;
     print $i->indent("to be or not to be");
 
@@ -233,7 +239,7 @@ Ildar Shaimordanov E<lt>ildar.shaimordanov@gmail.comE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2017,2018 Ildar Shaimordanov. All rights reserved. 
+Copyright (c) 2017, 2018 Ildar Shaimordanov. All rights reserved. 
 
 This program is free software; you can redistribute it and/or modify it 
 under the same terms as Perl itself.
