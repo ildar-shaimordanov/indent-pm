@@ -96,7 +96,7 @@ automatically during import the module. This feature is supported by
 passing the options to the module (the same ones as described in the 
 section Constructor above). 
 
-    use Indent(size => 4, eol => 1);
+    use Indent (size => 4, eol => 1);
 
 In this case the module allows to turn the functionality using the static 
 methods (see the next section).
@@ -110,44 +110,49 @@ methods (OO-style). Each use case is specified separately.
 
 =item *
 
-C<Indent::indent>
+C<indent>
 
 Composes a string from a list of arguments prepending the indent of the 
 proper level and a new line as it is configured.
 
+    use Indent;
+    my $i = Indent->new(size => 4, eol => 1);
+    $i->over;
+    print $i->indent("to be or not to be");
+
 =item *
 
-C<Indent::reset>
+C<reset>
 
 Reset the indent by setting the level to I<0>.
 
 =item *
 
-C<Indent::over>
+C<over>
 
 Increment the indent by I<1>.
 
 =item *
 
-C<Indent::back>
+C<back>
 
 Decrement the indent by I<1>.
 
 =item *
 
-C<Indent::print> or C<$indent-E<gt>print>
+C<print>
 
 Print the line of arguments with the curent indent.
 
 =item *
 
-C<Indent::vprint> or C<$indent-E<gt>vprint>
+C<vprint>
 
 Print the lines of arguments with the curent indent.
 
 =item *
 
-C<Indent::printf> or C<$indent-E<gt>printf>
+C<printf>
 
 Print the formatted line of arguments with the curent indent.
 
