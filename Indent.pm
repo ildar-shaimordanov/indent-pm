@@ -40,7 +40,7 @@ sub new {
 
 	my $self = {
 		text => $p{text} // ( $p{tab} ? "\t" : " " x _lclamp( 1, $p{size} // 4 ) ),
-		EOL => $p{eol} ? "\n" : $\,
+		eol => $p{eol} ? "\n" : $\,
 		level => _lclamp( 0, $p{level} // 0 ),
 	};
 
@@ -125,7 +125,7 @@ sub print {
 	my $self = shift;
 	$self = $indent unless ref $self eq __PACKAGE__;
 
-	local $\ = $self->{EOL};
+	local $\ = $self->{eol};
 	CORE::print $self, @_;
 }
 
@@ -133,7 +133,7 @@ sub vprint {
 	my $self = shift;
 	$self = $indent unless ref $self eq __PACKAGE__;
 
-	local $\ = $self->{EOL};
+	local $\ = $self->{eol};
 	CORE::print $self, $_ for ( @_ );
 }
 
