@@ -27,7 +27,7 @@ that could not know about other modules. Once configured the indentation
 will be common for all modules printing indented texts.
 
 This module is designed to be used in the simplest way as much as 
-possible. It ptrovides some methods to handle with indentation. Also it 
+possible. It provides some methods to handle with indentation. Also it 
 doesn't require any extra modules.
 
 =head1 METHODS AND FEATURES
