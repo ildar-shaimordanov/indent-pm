@@ -87,17 +87,20 @@ use overload (
 
 # =========================================================================
 
+my $indent;
+
 sub import {
-	shift;
-	goto &config if @_;
+	my $pkg = shift;
+	$indent = $pkg->new(@_) if @_;
 }
 
 # =========================================================================
 
-my $indent;
+sub indent {
+	my $self = shift;
+	$self = $indent unless ref $self eq __PACKAGE__;
 
-sub config {
-	$indent = __PACKAGE__->new(@_);
+	"$self@_$self->{eol}";
 }
 
 sub reset {

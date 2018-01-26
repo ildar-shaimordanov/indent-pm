@@ -110,10 +110,10 @@ methods (OO-style). Each use case is specified separately.
 
 =item *
 
-C<Indent::config>
+C<Indent::indent>
 
-The method is used to configure the indent. It is called internally, when 
-using the module with options.
+Composes a string from a list of arguments prepending the indent of the 
+proper level and a new line as it is configured.
 
 =item *
 
