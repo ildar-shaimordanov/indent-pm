@@ -9,16 +9,23 @@ This module version is 0.3.
 =head1 SYNOPSIS
 
     # Setup the indentation of 4 spaces and automatical line ending.
+    use Text::Indent::Simple;
+    my $indent = Text::Indent::Simple->new(size => 4, eol => 1);
+
     # Print somthing starting from the level 1.
-    use Indent;
-    my $indent = Indent->new(size => 4, eol => 1);
     $indent->over;
     $indent->printf("Hello, world!");
     $indent->back;
 
 =head1 DESCRIPTION
 
-This module is designed to be used in the simplest way as much as possible. It ptrovides some methods to handle with indentation. Also it doesn't require any extra modules.
+This module is designed to print indented texts produced by many modules 
+that could not know about other modules. Once configured the indentation 
+will be common for all modules printing indented texts.
+
+This module is designed to be used in the simplest way as much as 
+possible. It ptrovides some methods to handle with indentation. Also it 
+doesn't require any extra modules.
 
 =head1 METHODS AND FEATURES
 
@@ -26,7 +33,8 @@ This module is designed to be used in the simplest way as much as possible. It p
 
 The constructor is used to explicitly instantiate the indent object. 
 
-By default (if no options provided) it creates the indent with C<4> space characters, starting level is C<0>, with no trailing newline. 
+By default (if no options provided) it creates the indent with C<4> space 
+characters, starting level is C<0>, with no trailing newline. 
 
 The following options are available:
 
@@ -42,7 +50,8 @@ Use the TAB character as the indent text.
 
 =item B<size> => I<SIZE>
 
-Use indent as the I<SIZE> length string of SPACE characters. The defauilt value is C<4>.
+Use indent as the I<SIZE> length string of SPACE characters. The defauilt 
+value is C<4>.
 
 =item B<eol> => I<0> | I<1>
 
@@ -96,16 +105,17 @@ Decrease the indent adding the specified value.
 
 =head2 Importing and Configuring
 
-There is no needs to import anything. The indent object can be created explicitly by the program or implicitly within the module. 
+There is no needs to import anything. The indent object can be created 
+explicitly by the program or implicitly within the module.
 
 To get access to the internally instatiated indent object you could use:
 
-    my $indent = $Indent::indent;
+    my $indent = $Text::Indent::Simple::indent;
 
 =head2 Methods
 
 There are few methods available for invoking as static methods or dynamic 
-methods (OO-style). Each use case is specified separately. 
+methods (OO-style). Each use case is specified separately.
 
 =over 4
 
@@ -116,8 +126,8 @@ C<indent>
 Composes a string from a list of arguments prepended by the indent of the 
 proper level and a new line as it is configured.
 
-    use Indent;
-    my $i = Indent->new(size => 4, eol => 1);
+    use Text::Indent::Simple;
+    my $i = Text::Indent::Simple->new(size => 4, eol => 1);
     $i->over;
     print $i->indent("to be or not to be");
 
@@ -161,19 +171,31 @@ Print the formatted line of arguments with the curent indent.
 
 =head2 Implicit (POD-style) use
 
-    use Indent( text => " ", eol => 1, level => 1 );
+    use Text::Indent::Simple (
+        text => " ",
+        eol => 1,
+        level => 1,
+    );
+    my $indent = Text::Indent::Simple::indent;
 
     my @str = qw( down stairs to hell );
 
-    Indent->printf("@str");
-    ( Indent->over, Indent->printf($_) ) for ( @str );
-    Indent->reset;
-    Indent->printf("there is no way");
+    $idnent->printf("@str");
+    for ( @str ) {
+        $indent->over;
+        $indent->printf($_);
+    }
+    $indent->reset;
+    $indent->printf("there is no way");
 
 =head2 Explicit (OO-style) use
 
-    use Indent;
-    our $indent = Indent->new( text => " ", eol => 1, level => 1 );
+    use Text::Indent::Simple;
+    our $indent = Text::Indent::Simple->new(
+        text => " ",
+        eol => 1,
+        level => 1,
+    );
 
     local $\ = "\n";
     my @str = qw( down stairs to hell );
@@ -187,7 +209,7 @@ Print the formatted line of arguments with the curent indent.
 
 =head2 Notes
 
-The C<Indent::print> and C<*-E<gt>print> families methods work similar to 
+The C<Text::Indent::Simple-E<gt>print> families methods work similar to 
 their core analogs except they prepend the indent to each printed line and 
 handle newline internally.
 

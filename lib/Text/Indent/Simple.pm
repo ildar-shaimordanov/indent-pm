@@ -1,4 +1,4 @@
-package Indent;
+package Text::Indent::Simple;
 
 use strict;
 use warnings;
