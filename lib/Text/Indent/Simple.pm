@@ -96,7 +96,7 @@ sub import {
 
 # =========================================================================
 
-sub indent {
+sub item {
 	my $self = shift;
 	$self = $indent unless ref $self eq __PACKAGE__;
 
@@ -114,7 +114,7 @@ sub over {
 	my $self = shift;
 	$self = $indent unless ref $self eq __PACKAGE__;
 
-	_set_indent $self, +1;
+	_set_indent $self, shift || +1;
 }
 
 sub back {

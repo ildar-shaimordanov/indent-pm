@@ -124,7 +124,7 @@ methods (OO-style). Each use case is specified separately.
 
 =item *
 
-C<indent>
+C<item>
 
 Composes a string from a list of arguments prepended by the indent of the 
 proper level and a new line as it is configured.
@@ -135,7 +135,7 @@ proper level and a new line as it is configured.
         eol => 1,
     );
     $i->over;
-    print $i->indent("to be or not to be");
+    print $i->item("to be or not to be");
 
 =item *
 
@@ -239,7 +239,7 @@ Ildar Shaimordanov E<lt>ildar.shaimordanov@gmail.comE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2017, 2018 Ildar Shaimordanov. All rights reserved. 
+Copyright (c) 2017, 2018, 2019 Ildar Shaimordanov. All rights reserved. 
 
 This program is free software; you can redistribute it and/or modify it 
 under the same terms as Perl itself.

@@ -7,7 +7,7 @@ use Text::Indent::Simple;
 
 sub greet {
 	my $i = $Text::Indent::Simple::indent;
-	print $i->indent("I am Foo");
+	print $i->item("I am Foo");
 }
 
 1;
