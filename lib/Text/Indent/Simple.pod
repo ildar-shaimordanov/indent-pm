@@ -121,13 +121,16 @@ Indent each line with 4 spaces, by default. Each line will be appended with new 
 	$\ = "\n";
 
 	# Indent each line with 4 spaces (by default)
+	$indent->over;
 	print $indent->item(
 		"To be or not to be",
 		"That is the question",
 	);
+	$indent->back;
 
-	# Indent the particular line with 10 spaces
-	print $indent->over(10)->item("William Shakespeare");
+	# Indent to 5th level the particular line (with 20 spaces)
+	$indent->over(5);
+	print $indent->item("William Shakespeare");
 
 =head2 Example 2. Simple usage
 
