@@ -3,33 +3,37 @@ package Text::Indent::Simple;
 use strict;
 use warnings;
 
-our $VERSION = "0.3";
+our $VERSION = "0.4";
+
+our $DefaultSpace = " ";
+our $DefaultSize = 4;
+
+our $indent;
 
 # =========================================================================
 
 # Clamp a value on the edge, that is minimum. 
 # So the value can't be less than this restriction.
 
-sub _lclamp {
+sub lclamp {
 	my ( $min, $v ) = @_;
 	$v < $min ? $min : $v;
 }
 
 # Set the valid level and evaluate the proper indentation.
 
-sub _set_indent {
-	my $p = shift;
+sub set_indent {
+	my $self = shift;
 	my $v = shift // 0;
 
-	$p->{level} = _lclamp( 0, $p->{level} += $v );
-	$p->{indent} = $p->{text} x $p->{level};
-}
+	if ( defined wantarray ) {
+		$self = bless { %{ $self } }, ref $self;
+	}
 
-# Detect argument type and get the level value
+	$self->{level} = lclamp($self->{initial}, $self->{level} + $v);
+	$self->{indent} = $self->{text} x $self->{level};
 
-sub _get_level {
-	my $v = shift;
-	ref $v eq __PACKAGE__ ? $v->{level} : $v;
+	return $self;
 }
 
 # =========================================================================
@@ -38,56 +42,32 @@ sub new {
 	my $class = shift;
 	my %p = @_;
 
-	my $self = {
-		text => $p{text} // ( $p{tab} ? "\t" : " " x _lclamp( 1, $p{size} // 4 ) ),
-		eol => $p{eol} ? "\n" : $\,
-		level => _lclamp( 0, $p{level} // 0 ),
-	};
+	my $t = $DefaultSpace;
+	my $s = $DefaultSize;
 
-	_set_indent $self;
+	my $self = bless {
+		text	=> $p{text} // ( $p{tab} ? "\t" : $t x lclamp(1, $p{size} // $s) ),
+		eol	=> $p{eol},
+		level	=> 0,
+		initial	=> lclamp(0, $p{level} // 0),
+	}, $class;
 
-	bless $self, $class;
+	$self->set_indent;
+
+	$indent = $self if $p{propagate};
+
+	return $self;
 }
 
 # =========================================================================
 
 use overload (
-	'=' => sub {
-		my $self = shift;
-		bless { %{ $self } }, ref $self;
-	},
 	'""' => sub {
 		shift->{indent};
-	},
-	'++' => sub {
-		shift->over;
-	}, 
-	'--' => sub {
-		shift->back;
-	},
-	'+' => sub {
-		my $self = shift;
-		my $v = shift;
-
-		my %self = %{ $self };
-		_set_indent \%self, +_get_level($v);
-
-		bless { %self }, ref $self;
-	},
-	'-' => sub {
-		my $self = shift;
-		my $v = shift;
-
-		my %self = %{ $self };
-		_set_indent \%self, -_get_level($v);
-
-		bless { %self }, ref $self;
 	},
 );
 
 # =========================================================================
-
-our $indent;
 
 sub import {
 	my $pkg = shift;
@@ -98,54 +78,24 @@ sub import {
 
 sub item {
 	my $self = shift;
-	$self = $indent unless ref $self eq __PACKAGE__;
-
-	"$self@_$self->{eol}";
+	my $e = $self->{eol} && ! $\ ? "\n" : "";
+	join($e || $\ || "", map { "$self->{indent}$_" } @_) . $e;
 }
 
 sub reset {
 	my $self = shift;
-	$self = $indent unless ref $self eq __PACKAGE__;
-
-	_set_indent $self, -$self->{level};
+	$self->set_indent($self->{initial} - $self->{level});
 }
 
 sub over {
 	my $self = shift;
-	$self = $indent unless ref $self eq __PACKAGE__;
-
-	_set_indent $self, shift || +1;
+	$self->set_indent(+abs(shift // 1));
 }
 
 sub back {
 	my $self = shift;
-	$self = $indent unless ref $self eq __PACKAGE__;
-
-	_set_indent $self, -1;
+	$self->set_indent(-abs(shift // 1));
 }
-
-sub print {
-	my $self = shift;
-	$self = $indent unless ref $self eq __PACKAGE__;
-
-	local $\ = $self->{eol};
-	CORE::print $self, @_;
-}
-
-sub vprint {
-	my $self = shift;
-	$self = $indent unless ref $self eq __PACKAGE__;
-
-	local $\ = $self->{eol};
-	CORE::print $self, $_ for ( @_ );
-}
-
-sub printf {
-	my $self = shift;
-	$self = $indent unless ref $self eq __PACKAGE__;
-
-	$self->print(sprintf shift // "", @_);
-};
 
 1;
 

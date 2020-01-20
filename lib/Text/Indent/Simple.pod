@@ -1,227 +1,183 @@
 =head1 NAME
 
-Text::Indent::Simple - simple indentation
+Text::Indent::Simple - simple and flexible indentation across modules
 
 =head1 VERSION
 
-This module version is 0.3.
+This module version is 0.4.
 
 =head1 SYNOPSIS
 
-    # Setup the indentation of 4 spaces and automatical line ending.
-    use Text::Indent::Simple;
-    my $indent = Text::Indent::Simple->new(
-        size => 4,
-        eol => 1,
-    );
+Simple usage
 
-    # Print somthing starting from the level 1.
-    $indent->over;
-    $indent->printf("Hello, world!");
-    $indent->back;
+	use Text::Indent::Simple;
+	my $indent = Text::Indent::Simple->new(
+		eol	=> 1,
+		size	=> 1,
+		level	=> 2,
+	);
+
+Crosss-module usage
+
+	use Text::Indent::Simple (
+		eol	=> 1,
+		size	=> 1,
+		level	=> 2,
+	);
 
 =head1 DESCRIPTION
 
-This module is designed to print indented texts produced by many modules 
-that could not know about other modules. Once configured the indentation 
-will be common for all modules printing indented texts.
+The module is designed to be used for printing indentation in the simplest way as much as possible. It provides methods for turning on/off indentation and output using the current indentation.
 
-This module is designed to be used in the simplest way as much as 
-possible. It provides some methods to handle with indentation. Also it 
-doesn't require any extra modules.
+The module design was invented during discussion on the PerlMonks board at L<https://perlmonks.org/?node_id=1205367>. Monks there suggested to name the methods for increasing and decreasing indents in the POD-like style. Also they inspired to use overloading.
 
 =head1 METHODS AND FEATURES
 
 =head2 Constructor
 
-The constructor is used to explicitly instantiate the indent object. 
+The constructor is used for creating the indentaion object. If you need to use indentaion in one style across modules, initialize the indent object in the main program and instatiate it in other modules that use indentation.
 
-By default (if no options provided) it creates the indent with C<4> space 
-characters, starting level is C<0>, with no trailing newline. 
-
-The following options are available:
+To construct a new B<Text::Indent::Simple> object, invoke the B<new> method passing the following options as a hash:
 
 =over 4
 
-=item B<text> => I<STRING>
+=item B<level>
 
-Use the I<STRING> as the indent.
+The initial indentation level. Defaults to C<0> (meaning no indent).
 
-=item B<tab> => I<0> | I<1>
+=item B<size>
 
-Use the TAB character as the indent text.
+The number of indent spaces used for each level of indentation. If not specified, the B<$Text::Indent::Simple::DefaultSize> is used.
 
-=item B<size> => I<SIZE>
+=item B<tab>
 
-Use indent as the I<SIZE> length string of SPACE characters. The defauilt 
-value is C<4>.
+The flag to use C<TAB> as indent.
 
-=item B<eol> => I<0> | I<1>
+=item B<eol>
 
-I<1> means add a newline automatically, when printing the indented line.
+If specified, tell the B<item> method to add automatically new lines to the input arguments.
 
-=item B<level> => I<LEVEL>
+=item B<propagate>
 
-Specify the initial I<LEVEL> of the indent. If it is not specified, the 
-default value I<0> is assumed.
+Enable cross-module usage with B<$Text::Indent::Simple::indent> variable.
 
 =back
 
-The options B<text>, B<tab> and B<size> have impact on the same stuff, so  
-they have the order of their applying. The highest importance has B<text> 
-and the lowest importance has B<size>. So the initial indent will be set 
-accordingly the higher option. And others (if specified) will be ignored.
+The options B<tab> and B<size> have impact on the same stuff. If B<tab> is specified, it cancels B<size> and any other characters in favor of C<TAB>.
 
-=head2 Features
+=head2 B<over>
 
-The module provides overloading for some useful operators. All the 
-overloaded operators are listed below:
+Increase the indentation by one or more levels. Defaults to C<1>. 
+
+If the method is invoked in the scalar context, it enables to apply indentation locally for the particular lines (see the Examples 1 and 2).
+
+=head2 B<back>
+
+Decrease the indentation by one or more levels. Defaults to C<1>.
+
+If the method is invoked in the scalar context, it enables to apply indentation locally for the particular lines (see the Examples 1 and 2).
+
+=head2 reset
+
+Reset all indentations to the initial level (as it has been set in the cunstructor).
+
+=head2 item
+
+This method returns all arguments indented. Accordingly the B<eol> option and the configured C<$\> variable it appends all but last arguments with new line.
+
+=head2 Variables
 
 =over 4
 
-=item B<=>
+=item B<$Text::Indent::Simple::DefaultSpace>
 
-Copy or clone the indent instance.
+The text to be used for indentation. Defaults to one C<SPACE> character.
 
-=item B<"">
+=item B<$Text::Indent::Simple::DefaultSize>
 
-Stringify the indent. It is used when passing the indent as the argument 
-to C<print>.
+The number of indent spaces used for each level of indentation. Defaults to C<4>.
 
-=item B<++>
+=item B<$Text::Indent::Simple::indent>
 
-Increment the indent by I<1>.
-
-=item B<-->
-
-Decrement the indent by I<1>.
-
-=item B<+>
-
-Increase the indent adding the specified value.
-
-=item B<->
-
-Decrease the indent adding the specified value.
+The indentation object for using across modules.
 
 =back
 
-=head2 Importing and Configuring
+=head2 Overloading
 
-There is no needs to import anything. The indent object can be created 
-explicitly by the program or implicitly within the module.
+The only stringify conversion is enabled. It allows to print indentation standalone as follows:
 
-To get access to the internally instatiated indent object you could use:
+	print $indent, "some text\n";
 
-    my $indent = $Text::Indent::Simple::indent;
+=head1 EXAMPLES
 
-=head2 Methods
+=head2 Example 1. Simplest usage
 
-There are few methods available for invoking as static methods or dynamic 
-methods (OO-style). Each use case is specified separately.
+Indent each line with 4 spaces, by default. Each line will be appended with new line. The last line will be indented with 10 spaces.
 
-=over 4
+	use Text::Indent::Simple;
+	my $indent = Text::Indent::Simple->new;
 
-=item *
+	$\ = "\n";
 
-C<item>
+	# Indent each line with 4 spaces (by default)
+	print $indent->item(
+		"To be or not to be",
+		"That is the question",
+	);
 
-Composes a string from a list of arguments prepended by the indent of the 
-proper level and a new line as it is configured.
+	# Indent the particular line with 10 spaces
+	print $indent->over(10)->item("William Shakespeare");
 
-    use Text::Indent::Simple;
-    my $i = Text::Indent::Simple->new(
-        size => 4,
-        eol => 1,
-    );
-    $i->over;
-    print $i->item("to be or not to be");
+=head2 Example 2. Simple usage
 
-=item *
+Set indent to one C<SPACE> character. Start indentation is set to 2. Each indented string is appended with new line.
 
-C<reset>
+	use Text::Indent::Simple;
+	my $indent = Text::Indent::Simple->new(
+		eol	=> 1,
+		size	=> 1,
+		level	=> 2,
+	);
 
-Reset the indent by setting the level to I<0>.
+	print $indent->item("| after init");
+	$indent->over(3);
+	print $indent->item("| after over");
+	print $indent->over->item("> over locally");
+	print $indent->item("| next text");
+	print $indent->back->item("< back locally");
+	print $indent->item("| next text");
+	$indent->reset;
+	print $indent->item("| after reset");
 
-=item *
+=head2 Example 3. Cross-module usage
 
-C<over>
+Import module and initialize indentation accordingly the options. This indentation will be available across all modules.
 
-Increment the indent by I<1>.
+	use Text::Indent::Simple (
+		eol	=> 1,
+		size	=> 1,
+		level	=> 2,
+	);
 
-=item *
+	# The indentation object is available across all modules
+	my $indent = $Text::Indent::Simple::indent;
 
-C<back>
+=head2 Example 4. Cross-module usage
 
-Decrement the indent by I<1>.
+The same as above but importing and initialization are separate.
 
-=item *
+	use Text::Indent::Simple;
 
-C<print>
+	Text::Indent::Simple->new(
+		propagate => 1, # Enable cross-module usage
+		eol	=> 1,
+		size	=> 1,
+		level	=> 2,
+	);
 
-Print the line of arguments with the curent indent.
-
-=item *
-
-C<vprint>
-
-Print the lines of arguments with the curent indent.
-
-=item *
-
-C<printf>
-
-Print the formatted line of arguments with the curent indent.
-
-=back
-
-=head2 Implicit (POD-style) use
-
-    use Text::Indent::Simple (
-        text => " ",
-        eol => 1,
-        level => 1,
-    );
-    my $indent = Text::Indent::Simple::indent;
-
-    my @str = qw( down stairs to hell );
-
-    $idnent->printf("@str");
-    for ( @str ) {
-        $indent->over;
-        $indent->printf($_);
-    }
-    $indent->reset;
-    $indent->printf("there is no way");
-
-=head2 Explicit (OO-style) use
-
-    use Text::Indent::Simple;
-    our $indent = Text::Indent::Simple->new(
-        text => " ",
-        eol => 1,
-        level => 1,
-    );
-
-    local $\ = "\n";
-    my @str = qw( down stairs to hell );
-
-    print($indent, "@str");
-    {
-        local $indent = $indent;
-        ( ++$indent )->printf($_) for ( @str );
-    }
-    print($indent - 1, "there is no way");
-
-=head2 Notes
-
-The C<Text::Indent::Simple-E<gt>print> families methods work similar to 
-their core analogs except they prepend the indent to each printed line and 
-handle newline internally.
-
-No other file handlers are supported except STDOUT. Indentation of other 
-file handlers is available by passing the indent instance as the argument 
-of the printing methods.
+	# The indentation object is available across all modules
+	my $indent = $Text::Indent::Simple::indent;
 
 =head1 SEE ALSO
 
@@ -239,7 +195,7 @@ Ildar Shaimordanov E<lt>ildar.shaimordanov@gmail.comE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2017, 2018, 2019 Ildar Shaimordanov. All rights reserved. 
+Copyright (c) 2017-2020 Ildar Shaimordanov. All rights reserved. 
 
 This program is free software; you can redistribute it and/or modify it 
 under the same terms as Perl itself.
