@@ -57,13 +57,13 @@ The flag to use C<TAB> as indent.
 
 If specified, tell the B<item> method to add automatically new lines to the input arguments.
 
-=item B<propagate>
-
-Enable cross-module usage with B<$Text::Indent::Simple::indent> variable.
-
 =back
 
 The options B<tab> and B<size> have impact on the same stuff. If B<tab> is specified, it cancels B<size> and any other characters in favor of C<TAB>.
+
+=head2 B<instance>
+
+This method returns the current object instance or create a new one by calling the constructor. In fact, it implements a singleton restricting the only instance across a program and its modules. It allows the same set of arguments as the constructor.
 
 =head2 B<over>
 
@@ -96,10 +96,6 @@ The text to be used for indentation. Defaults to one C<SPACE> character.
 =item B<$Text::Indent::Simple::DefaultSize>
 
 The number of indent spaces used for each level of indentation. Defaults to C<4>.
-
-=item B<$Text::Indent::Simple::indent>
-
-The indentation object for using across modules.
 
 =back
 
@@ -157,6 +153,7 @@ Set indent to one C<SPACE> character. Start indentation is set to 2. Each indent
 
 Import module and initialize indentation accordingly the options. This indentation will be available across all modules.
 
+	# Instantiate by the program
 	use Text::Indent::Simple (
 		eol	=> 1,
 		size	=> 1,
@@ -164,7 +161,7 @@ Import module and initialize indentation accordingly the options. This indentati
 	);
 
 	# The indentation object is available across all modules
-	my $indent = $Text::Indent::Simple::indent;
+	my $indent = $Text::Indent::Simple->instance();
 
 =head2 Example 4. Cross-module usage
 
@@ -172,15 +169,12 @@ The same as above but importing and initialization are separate.
 
 	use Text::Indent::Simple;
 
-	Text::Indent::Simple->new(
-		propagate => 1, # Enable cross-module usage
+	# The indentation object is available across all modules
+	my $indent = Text::Indent::Simple->instance(
 		eol	=> 1,
 		size	=> 1,
 		level	=> 2,
 	);
-
-	# The indentation object is available across all modules
-	my $indent = $Text::Indent::Simple::indent;
 
 =head1 SEE ALSO
 
@@ -211,12 +205,12 @@ package Text::Indent::Simple;
 use strict;
 use warnings;
 
-our $VERSION = "0.4";
+our $VERSION = "0.5";
 
 our $DefaultSpace = " ";
 our $DefaultSize = 4;
 
-our $indent;
+my $indent;
 
 # =========================================================================
 
@@ -265,6 +259,12 @@ sub new {
 	$indent = $self if $p{propagate};
 
 	return $self;
+}
+
+# =========================================================================
+
+sub instance {
+	$indent //= new(@_);
 }
 
 # =========================================================================
