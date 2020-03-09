@@ -4,7 +4,7 @@ Text::Indent::Simple - simple and flexible indentation across modules
 
 =head1 VERSION
 
-This module version is 0.4.
+This module version is 0.5.
 
 =head1 SYNOPSIS
 
@@ -33,9 +33,9 @@ The module design was invented during discussion on the PerlMonks board at L<htt
 
 =head1 METHODS AND FEATURES
 
-=head2 Constructor
+=head2 Constructor B<new()>
 
-The constructor is used for creating the indentaion object. If you need to use indentaion in one style across modules, initialize the indent object in the main program and instatiate it in other modules that use indentation.
+The constructor is used for creating the indentaion object. If you need to use indentaion in one style across modules, initialize the indent object in the main program and instatiate it in other modules with the method B<instance()>.
 
 To construct a new B<Text::Indent::Simple> object, invoke the B<new> method passing the following options as a hash:
 
@@ -61,27 +61,27 @@ If specified, tell the B<item> method to add automatically new lines to the inpu
 
 The options B<tab> and B<size> have impact on the same stuff. If B<tab> is specified, it cancels B<size> and any other characters in favor of C<TAB>.
 
-=head2 B<instance>
+=head2 B<instance()>
 
 This method returns the current object instance or create a new one by calling the constructor. In fact, it implements a singleton restricting the only instance across a program and its modules. It allows the same set of arguments as the constructor.
 
-=head2 B<over>
+=head2 B<over()>
 
 Increase the indentation by one or more levels. Defaults to C<1>.
 
 If the method is invoked in the scalar context, it enables to apply indentation locally for the particular lines (see the Examples 1 and 2).
 
-=head2 B<back>
+=head2 B<back()>
 
 Decrease the indentation by one or more levels. Defaults to C<1>.
 
 If the method is invoked in the scalar context, it enables to apply indentation locally for the particular lines (see the Examples 1 and 2).
 
-=head2 reset
+=head2 B<reset()>
 
 Reset all indentations to the initial level (as it has been set in the cunstructor).
 
-=head2 item
+=head2 B<item()>
 
 This method returns all arguments indented. Accordingly the B<eol> option and the configured C<$\> variable it appends all but last arguments with new line.
 
