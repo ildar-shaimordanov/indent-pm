@@ -256,8 +256,6 @@ sub new {
 
 	$self->set_indent;
 
-	$indent = $self if $p{propagate};
-
 	return $self;
 }
 
