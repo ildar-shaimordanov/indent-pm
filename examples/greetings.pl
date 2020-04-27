@@ -8,23 +8,29 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin";
 
-use Text::Indent::Simple (size => 1, eol => 1);
+use Text::Indent::Simple (
+	size	=> 2,
+	eol	=> 1,
+);
 
-my $indent = $Text::Indent::Simple::indent;
+my $indent = Text::Indent::Simple->instance;
+
+print $indent->item("Start greetings...");
+
+print $indent->item("Hello, World!");
 
 $indent->over;
 
 use Foo;
-Foo::greet;
+Foo->greet;
 
-print $indent->item("Hello, Foo!");
-
-$indent->over;
+print $indent->over->item("Hello, Foo!");
 
 use Bar;
-Bar::greet;
+Bar->greet;
 
-print $indent->item("Hello, Bar!");
+print $indent->over->item("Hello, Bar!");
 
 $indent->reset;
-print $indent->item("Hello, World!");
+
+print $indent->item("Finished...");

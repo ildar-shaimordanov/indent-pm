@@ -6,8 +6,7 @@ use warnings;
 use Text::Indent::Simple;
 
 sub greet {
-	my $i = $Text::Indent::Simple::indent;
-	print $i->item("I am Foo");
+	print Text::Indent::Simple->instance->item("Hello! I am Boo");
 }
 
 1;

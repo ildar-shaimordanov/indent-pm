@@ -4,7 +4,7 @@ Text::Indent::Simple - simple and flexible indentation across modules
 
 =head1 VERSION
 
-This module version is 0.5.
+This module version is 0.5.1.
 
 =head1 SYNOPSIS
 
@@ -17,7 +17,7 @@ Simple usage
 		level	=> 2,
 	);
 
-Crosss-module usage
+Cross-module usage
 
 	use Text::Indent::Simple (
 		eol	=> 1,
@@ -53,13 +53,17 @@ The number of indent spaces used for each level of indentation. If not specified
 
 The flag to use C<TAB> as indent.
 
+=item B<text>
+
+The arbitrary text that is assumed to be indentation.
+
 =item B<eol>
 
 If specified, tell the B<item> method to add automatically new lines to the input arguments.
 
 =back
 
-The options B<tab> and B<size> have impact on the same stuff. If B<tab> is specified, it cancels B<size> and any other characters in favor of C<TAB>.
+The options B<text>, B<tab> and B<size> have impact on the same stuff. When specified, B<text> has the highest priority. If B<tab> is specified, it cancels B<size> and any other characters in favor of C<TAB>.
 
 =head2 B<instance()>
 
@@ -205,7 +209,7 @@ package Text::Indent::Simple;
 use strict;
 use warnings;
 
-our $VERSION = "0.5";
+our $VERSION = "0.5.1";
 
 our $DefaultSpace = " ";
 our $DefaultSize = 4;
@@ -247,8 +251,10 @@ sub new {
 	my $t = $DefaultSpace;
 	my $s = $DefaultSize;
 
+	$p{text} //= $p{tab} ? "\t" : $t x lclamp(1, $p{size} // $s);
+
 	my $self = bless {
-		text	=> $p{text} // ( $p{tab} ? "\t" : $t x lclamp(1, $p{size} // $s) ),
+		text	=> $p{text},
 		eol	=> $p{eol},
 		level	=> 0,
 		initial	=> lclamp(0, $p{level} // 0),
