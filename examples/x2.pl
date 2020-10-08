@@ -8,8 +8,8 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin";
 
-use Text::Indent::Simple;
-my $indent = Text::Indent::Simple->new(
+use Text::Indent::Tiny;
+my $indent = Text::Indent::Tiny->new(
 	eol	=> 1,
 	size	=> 1,
 	level	=> 2,

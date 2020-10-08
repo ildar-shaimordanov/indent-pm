@@ -1,17 +1,17 @@
 =head1 NAME
 
-Text::Indent::Simple - simple and flexible indentation across modules
+Text::Indent::Tiny - tiny and flexible indentation across modules
 
 =head1 VERSION
 
-This module version is 0.5.1.
+This module version is 0.5.2.
 
 =head1 SYNOPSIS
 
-Simple usage
+Tiny usage
 
-	use Text::Indent::Simple;
-	my $indent = Text::Indent::Simple->new(
+	use Text::Indent::Tiny;
+	my $indent = Text::Indent::Tiny->new(
 		eol	=> 1,
 		size	=> 1,
 		level	=> 2,
@@ -19,7 +19,7 @@ Simple usage
 
 Cross-module usage
 
-	use Text::Indent::Simple (
+	use Text::Indent::Tiny (
 		eol	=> 1,
 		size	=> 1,
 		level	=> 2,
@@ -37,7 +37,7 @@ The module design was invented during discussion on the PerlMonks board at L<htt
 
 The constructor is used for creating the indentaion object. If you need to use indentaion in one style across modules, initialize the indent object in the main program and instatiate it in other modules with the method B<instance()>.
 
-To construct a new B<Text::Indent::Simple> object, invoke the B<new> method passing the following options as a hash:
+To construct a new B<Text::Indent::Tiny> object, invoke the B<new> method passing the following options as a hash:
 
 =over 4
 
@@ -47,7 +47,7 @@ The initial indentation level. Defaults to C<0> (meaning no indent).
 
 =item B<size>
 
-The number of indent spaces used for each level of indentation. If not specified, the B<$Text::Indent::Simple::DefaultSize> is used.
+The number of indent spaces used for each level of indentation. If not specified, the B<$Text::Indent::Tiny::DefaultSize> is used.
 
 =item B<tab>
 
@@ -93,11 +93,11 @@ This method returns all arguments indented. Accordingly the B<eol> option and th
 
 =over 4
 
-=item B<$Text::Indent::Simple::DefaultSpace>
+=item B<$Text::Indent::Tiny::DefaultSpace>
 
 The text to be used for indentation. Defaults to one C<SPACE> character.
 
-=item B<$Text::Indent::Simple::DefaultSize>
+=item B<$Text::Indent::Tiny::DefaultSize>
 
 The number of indent spaces used for each level of indentation. Defaults to C<4>.
 
@@ -111,12 +111,12 @@ The only stringify conversion is enabled. It allows to print indentation standal
 
 =head1 EXAMPLES
 
-=head2 Example 1. Simplest usage
+=head2 Example 1. Tinyst usage
 
 Indent each line with 4 spaces, by default. Each line will be appended with new line. The last line will be indented with 10 spaces.
 
-	use Text::Indent::Simple;
-	my $indent = Text::Indent::Simple->new;
+	use Text::Indent::Tiny;
+	my $indent = Text::Indent::Tiny->new;
 
 	$\ = "\n";
 
@@ -132,12 +132,12 @@ Indent each line with 4 spaces, by default. Each line will be appended with new 
 	$indent->over(5);
 	print $indent->item("William Shakespeare");
 
-=head2 Example 2. Simple usage
+=head2 Example 2. Tiny usage
 
 Set indent to one C<SPACE> character. Start indentation is set to 2. Each indented string is appended with new line.
 
-	use Text::Indent::Simple;
-	my $indent = Text::Indent::Simple->new(
+	use Text::Indent::Tiny;
+	my $indent = Text::Indent::Tiny->new(
 		eol	=> 1,
 		size	=> 1,
 		level	=> 2,
@@ -158,23 +158,23 @@ Set indent to one C<SPACE> character. Start indentation is set to 2. Each indent
 Import module and initialize indentation accordingly the options. This indentation will be available across all modules.
 
 	# Instantiate by the program
-	use Text::Indent::Simple (
+	use Text::Indent::Tiny (
 		eol	=> 1,
 		size	=> 1,
 		level	=> 2,
 	);
 
 	# The indentation object is available across all modules
-	my $indent = $Text::Indent::Simple->instance();
+	my $indent = Text::Indent::Tiny->instance();
 
 =head2 Example 4. Cross-module usage
 
 The same as above but importing and initialization are separate.
 
-	use Text::Indent::Simple;
+	use Text::Indent::Tiny;
 
 	# The indentation object is available across all modules
-	my $indent = Text::Indent::Simple->instance(
+	my $indent = Text::Indent::Tiny->instance(
 		eol	=> 1,
 		size	=> 1,
 		level	=> 2,
@@ -204,12 +204,14 @@ See L<http://www.perl.com/perl/misc/Artistic.html>
 
 =cut
 
-package Text::Indent::Simple;
+package Text::Indent::Tiny;
+
+use 5.004;
 
 use strict;
 use warnings;
 
-our $VERSION = "0.5.1";
+our $VERSION = "0.5.2";
 
 our $DefaultSpace = " ";
 our $DefaultSize = 4;

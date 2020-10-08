@@ -5,8 +5,8 @@ Lightweight indent handling across modules
 Simple usage
 
 ```
-	use Text::Indent::Simple;
-	my $indent = Text::Indent::Simple->new(
+	use Text::Indent::Tiny;
+	my $indent = Text::Indent::Tiny->new(
 		eol	=> 1,
 		size	=> 1,
 		level	=> 2,
@@ -16,7 +16,7 @@ Simple usage
 Cross-module usage
 
 ```
-	use Text::Indent::Simple (
+	use Text::Indent::Tiny (
 		eol	=> 1,
 		size	=> 1,
 		level	=> 2,

@@ -8,12 +8,12 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib "$FindBin::Bin";
 
-use Text::Indent::Simple (
+use Text::Indent::Tiny (
 	size	=> 2,
 	eol	=> 1,
 );
 
-my $indent = Text::Indent::Simple->instance;
+my $indent = Text::Indent::Tiny->instance;
 
 print $indent->item("Start greetings...");
 
