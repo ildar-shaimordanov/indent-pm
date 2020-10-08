@@ -8,7 +8,7 @@ This module version is 0.5.2.
 
 =head1 SYNOPSIS
 
-Tiny usage
+Simple usage
 
 	use Text::Indent::Tiny;
 	my $indent = Text::Indent::Tiny->new(
@@ -111,7 +111,7 @@ The only stringify conversion is enabled. It allows to print indentation standal
 
 =head1 EXAMPLES
 
-=head2 Example 1. Tinyst usage
+=head2 Example 1. Simplest usage
 
 Indent each line with 4 spaces, by default. Each line will be appended with new line. The last line will be indented with 10 spaces.
 
@@ -132,7 +132,7 @@ Indent each line with 4 spaces, by default. Each line will be appended with new 
 	$indent->over(5);
 	print $indent->item("William Shakespeare");
 
-=head2 Example 2. Tiny usage
+=head2 Example 2. Simple usage
 
 Set indent to one C<SPACE> character. Start indentation is set to 2. Each indented string is appended with new line.
 
