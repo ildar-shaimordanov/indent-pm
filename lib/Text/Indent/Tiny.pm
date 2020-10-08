@@ -188,6 +188,10 @@ L<Print::Indented>
 
 L<String::Indent>
 
+L<Indent::Block>
+
+L<Indent::String>
+
 ... and lot of other competitors.
 
 =head1 AUTHOR
