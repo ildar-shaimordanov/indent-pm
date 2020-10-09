@@ -22,5 +22,5 @@ print $indent->over->item("> over locally");
 print $indent->item("| next text");
 print $indent->back->item("< back locally");
 print $indent->item("| next text");
-$indent->reset;
+$indent->cut;
 print $indent->item("| after reset");

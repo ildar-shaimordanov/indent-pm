@@ -6,7 +6,7 @@ use warnings;
 use Text::Indent::Tiny;
 
 sub greet {
-	print Text::Indent::Tiny->instance->item("Hello! I am Boo");
+	Text::Indent::Tiny->instance->item(__PACKAGE__ . ": Hi, main!");
 }
 
 1;

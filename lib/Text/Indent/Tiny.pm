@@ -4,7 +4,7 @@ Text::Indent::Tiny - tiny and flexible indentation across modules
 
 =head1 VERSION
 
-This module version is 0.5.2.
+This module version is 0.5.3.
 
 =head1 SYNOPSIS
 
@@ -71,19 +71,27 @@ This method returns the current object instance or create a new one by calling t
 
 =head2 B<over()>
 
+=head2 B<increase()>
+
 Increase the indentation by one or more levels. Defaults to C<1>.
 
 If the method is invoked in the scalar context, it enables to apply indentation locally for the particular lines (see the Examples 1 and 2).
 
 =head2 B<back()>
 
+=head2 B<decrease()>
+
 Decrease the indentation by one or more levels. Defaults to C<1>.
 
 If the method is invoked in the scalar context, it enables to apply indentation locally for the particular lines (see the Examples 1 and 2).
 
+=head2 B<cut()>
+
 =head2 B<reset()>
 
 Reset all indentations to the initial level (as it has been set in the cunstructor).
+
+If the method is invoked in the scalar context, it enables to apply indentation locally for the particular lines (see the Examples 1 and 2).
 
 =head2 B<item()>
 
@@ -150,7 +158,7 @@ Set indent to one C<SPACE> character. Start indentation is set to 2. Each indent
 	print $indent->item("| next text");
 	print $indent->back->item("< back locally");
 	print $indent->item("| next text");
-	$indent->reset;
+	$indent->cut;
 	print $indent->item("| after reset");
 
 =head2 Example 3. Cross-module usage
@@ -215,12 +223,20 @@ use 5.004;
 use strict;
 use warnings;
 
-our $VERSION = "0.5.2";
+our $VERSION = "0.5.3";
 
 our $DefaultSpace = " ";
 our $DefaultSize = 4;
 
+# The indent that is supposed to be used across a program and modules.
+
 my $indent;
+
+# Aliases for using in more familiar kind
+
+*reset    = \&cut;
+*increase = \&over;
+*decrease = \&back;
 
 # =========================================================================
 
@@ -258,12 +274,13 @@ sub new {
 	my $s = $DefaultSize;
 
 	$p{text} //= $p{tab} ? "\t" : $t x lclamp(1, $p{size} // $s);
+	$p{level} = lclamp(0, $p{level} // 0);
 
 	my $self = bless {
 		text	=> $p{text},
 		eol	=> $p{eol},
-		level	=> 0,
-		initial	=> lclamp(0, $p{level} // 0),
+		level	=> $p{level},
+		initial	=> $p{level},
 	}, $class;
 
 	$self->set_indent;
@@ -300,7 +317,7 @@ sub item {
 	join($e || $\ || "", map { "$self->{indent}$_" } @_) . $e;
 }
 
-sub reset {
+sub cut {
 	my $self = shift;
 	$self->set_indent($self->{initial} - $self->{level});
 }

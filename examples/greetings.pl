@@ -15,22 +15,24 @@ use Text::Indent::Tiny (
 
 my $indent = Text::Indent::Tiny->instance;
 
-print $indent->item("Start greetings...");
+print $indent->item("Start conversation...");
 
-print $indent->item("Hello, World!");
-
+# All greetings coming from modules will be indented once
 $indent->over;
 
-use Foo;
-Foo->greet;
+# All our greetings will be indented twice
+print $indent->over->item(__PACKAGE__ . ": Hello, World! I am going to start greetings.");
 
-print $indent->over->item("Hello, Foo!");
+print $indent->back->item("Start greetings...");
+
+use Foo;
+print $indent->over->item(__PACKAGE__ . ": Hello, Foo!");
+print Foo->greet;
 
 use Bar;
-Bar->greet;
+print $indent->over->item(__PACKAGE__ . ": Hello, Bar!");
+print Bar->greet;
 
-print $indent->over->item("Hello, Bar!");
-
-$indent->reset;
+$indent->cut;
 
 print $indent->item("Finished...");

@@ -21,6 +21,6 @@ print $indent->item(
 );
 $indent->back;
 
-# Indent to 5th level the particular line (with 20 spaces)
+# Indent the particular line to 5th level (with 20 spaces)
 $indent->over(5);
 print $indent->item("William Shakespeare");
