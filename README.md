@@ -1,6 +1,6 @@
 # indent-pm
 
-Lightweight indent handling across modules
+Lightweight, tiny and flexible indent handling across a program and its modules. And there is no non-core modules' dependency.
 
 Simple usage
 
@@ -21,4 +21,6 @@ Cross-module usage
 		size	=> 1,
 		level	=> 2,
 	);
+
+	$indent = Text::Indent::Tiny->instance;
 ```

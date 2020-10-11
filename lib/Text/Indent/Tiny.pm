@@ -31,7 +31,7 @@ The module is designed to be used for printing indentation in the simplest way a
 
 The module design was invented during discussion on the PerlMonks board at L<https://perlmonks.org/?node_id=1205367>. Monks there suggested to name the methods for increasing and decreasing indents in the POD-like style. Also they inspired to use overloading.
 
-=head1 METHODS AND FEATURES
+=head1 INSTANTIATING
 
 =head2 Constructor B<new()>
 
@@ -65,39 +65,35 @@ If specified, tell the B<item> method to add automatically new lines to the inpu
 
 The options B<text>, B<tab> and B<size> have impact on the same stuff. When specified, B<text> has the highest priority. If B<tab> is specified, it cancels B<size> and any other characters in favor of C<TAB>.
 
-=head2 B<instance()>
+=head2 Singleton B<instance()>
 
 This method returns the current object instance or create a new one by calling the constructor. In fact, it implements a singleton restricting the only instance across a program and its modules. It allows the same set of arguments as the constructor.
 
-=head2 B<over()>
+=head1 METHODS
 
-=head2 B<increase()>
+The following methods are used for handling with indents: increasing, decreasing, resetting them and applying indents to strings.
+
+There are two naming styles. The first one is a POD-like style risen from the discussion at PerlMonks https://perlmonks.org/?node_id=1205367. The second one is more usual.
+
+Calling the methods in a void context is applied to the instance itself. If the methods are invoked in the scalar context, a new instance is created in this context and changes are applied for this instance only. See for details the Examples 1 and 2.
+
+=head2 B<over()>, B<increase()>
 
 Increase the indentation by one or more levels. Defaults to C<1>.
 
-If the method is invoked in the scalar context, it enables to apply indentation locally for the particular lines (see the Examples 1 and 2).
-
-=head2 B<back()>
-
-=head2 B<decrease()>
+=head2 B<back()>, B<decrease()>
 
 Decrease the indentation by one or more levels. Defaults to C<1>.
 
-If the method is invoked in the scalar context, it enables to apply indentation locally for the particular lines (see the Examples 1 and 2).
-
-=head2 B<cut()>
-
-=head2 B<reset()>
+=head2 B<cut()>, B<reset()>
 
 Reset all indentations to the initial level (as it has been set in the cunstructor).
-
-If the method is invoked in the scalar context, it enables to apply indentation locally for the particular lines (see the Examples 1 and 2).
 
 =head2 B<item()>
 
 This method returns all arguments indented. Accordingly the B<eol> option and the configured C<$\> variable it appends all but last arguments with new line.
 
-=head2 Variables
+=head1 VARIABLES
 
 =over 4
 
@@ -111,11 +107,15 @@ The number of indent spaces used for each level of indentation. Defaults to C<4>
 
 =back
 
-=head2 Overloading
+=head1 OVERLOADING
 
 The only stringify conversion is enabled. It allows to print indentation standalone as follows:
 
 	print $indent, "some text\n";
+
+or even
+
+	print "${indent}some text\n";
 
 =head1 EXAMPLES
 
@@ -136,9 +136,8 @@ Indent each line with 4 spaces, by default. Each line will be appended with new 
 	);
 	$indent->back;
 
-	# Indent to 5th level the particular line (with 20 spaces)
-	$indent->over(5);
-	print $indent->item("William Shakespeare");
+	# Indent the particular line locally to 5th level (with 20 spaces)
+	print $indent->over(5)->item("William Shakespeare");
 
 =head2 Example 2. Simple usage
 
