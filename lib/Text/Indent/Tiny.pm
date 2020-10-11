@@ -4,7 +4,7 @@ Text::Indent::Tiny - tiny and flexible indentation across modules
 
 =head1 VERSION
 
-This module version is 0.5.3.
+This module version is 0.5.4.
 
 =head1 SYNOPSIS
 
@@ -73,7 +73,7 @@ This method returns the current object instance or create a new one by calling t
 
 The following methods are used for handling with indents: increasing, decreasing, resetting them and applying indents to strings.
 
-There are two naming styles. The first one is a POD-like style risen from the discussion at PerlMonks https://perlmonks.org/?node_id=1205367. The second one is more usual.
+There are two naming styles. The first one is a POD-like style risen from the discussion on PerlMonks at https://perlmonks.org/?node_id=1205367. The second one is more usual.
 
 Calling the methods in a void context is applied to the instance itself. If the methods are invoked in the scalar context, a new instance is created in this context and changes are applied for this instance only. See for details the Examples 1 and 2.
 
@@ -109,13 +109,38 @@ The number of indent spaces used for each level of indentation. Defaults to C<4>
 
 =head1 OVERLOADING
 
-The only stringify conversion is enabled. It allows to print indentation standalone as follows:
+Some one could find more convenient using the indents as objects of arithmetic operations and/or concatenated strings. This feature is the part of the discussion on PerlMonks at https://perlmonks.org/?node_id=1205367.
 
-	print $indent, "some text\n";
+The module overloads the following operations:
 
-or even
+=over 4
 
-	print "${indent}some text\n";
+=item C<"">
+
+Stringify the indentation.
+
+=item C<+>
+
+Increase the indentation.
+
+=item C<->
+
+Decrease the indentation.
+
+=item C<.>
+
+The same as C<< $indent->item() >>.
+
+=back
+
+So with overloading the Example 1 can looks more expressive:
+
+	print $indent + 1 . [
+		"To be or not to be",
+		"That is the question",
+	];
+
+	print $indent + 5 . "William Shakespeare";
 
 =head1 EXAMPLES
 
@@ -222,7 +247,7 @@ use 5.004;
 use strict;
 use warnings;
 
-our $VERSION = "0.5.3";
+our $VERSION = "0.5.4";
 
 our $DefaultSpace = " ";
 our $DefaultSize = 4;
@@ -298,6 +323,16 @@ sub instance {
 use overload (
 	'""' => sub {
 		shift->{indent};
+	},
+	'.' => sub {
+		shift->item(shift);
+	},
+	'+' => sub {
+		shift->over(shift);
+	},
+	'-' => sub {
+		warn "No sense to subtract indent from number" if $_[2];
+		shift->back(shift);
 	},
 );
 
