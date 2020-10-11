@@ -312,6 +312,7 @@ sub import {
 
 sub item {
 	my $self = shift;
+	@_ = @{ $_[0] } if ref $_[0] eq "ARRAY";
 	my $e = $self->{eol} && ! $\ ? "\n" : "";
 	join($e || $\ || "", map { "$self->{indent}$_" } @_) . $e;
 }
@@ -322,13 +323,15 @@ sub cut {
 }
 
 sub over {
-	my $self = shift;
-	$self->set_indent(+abs(shift // 1));
+	my ( $self, $v ) = @_;
+	$v = $v->{level} if ref $v eq __PACKAGE__;
+	$self->set_indent(+abs($v // 1));
 }
 
 sub back {
-	my $self = shift;
-	$self->set_indent(-abs(shift // 1));
+	my ( $self, $v ) = @_;
+	$v = $v->{level} if ref $v eq __PACKAGE__;
+	$self->set_indent(-abs($v // 1));
 }
 
 1;
