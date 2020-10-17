@@ -13,6 +13,8 @@ my $indent = Text::Indent::Tiny->new;
 
 $\ = "\n";
 
+print $indent->item("Poem");
+
 # Indent each line with 4 spaces (by default)
 $indent->over;
 print $indent->item(

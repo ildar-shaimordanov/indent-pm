@@ -13,6 +13,8 @@ my $indent = Text::Indent::Tiny->new;
 
 $\ = "\n";
 
+print $indent . "Poem";
+
 # Indent each line with 4 spaces (by default)
 print $indent + 1 . [
 	"To be or not to be",
