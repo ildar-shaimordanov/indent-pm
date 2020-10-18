@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+trap 'rm pod2*.tmp' EXIT
+
+echo "### Create README"
+
+pod2text lib/Text/Indent/Tiny.pm --nourls \
+> README
+
+echo "### Create README.md"
+
+pod2html lib/Text/Indent/Tiny.pm --noindex --verbose --quiet \
+| pandoc -f html -t gfm \
+| dos2unix \
+> README.md
