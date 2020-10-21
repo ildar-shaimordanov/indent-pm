@@ -4,7 +4,7 @@ Text::Indent::Tiny - tiny and flexible indentation across modules
 
 =head1 VERSION
 
-This module version is 0.1.1.
+This module version is 0.1.2.
 
 =head1 SYNOPSIS
 
@@ -257,7 +257,7 @@ use warnings;
 
 use Carp;
 
-our $VERSION = "0.1.1";
+our $VERSION = "0.1.2";
 
 # Default indent settings: 4 spaces per one indent
 
